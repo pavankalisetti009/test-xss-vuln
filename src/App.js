@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import VulnerableComponent from './VulnerableComponent';
+import AnotherVulnerableComponent from './AnotherVulnerableComponent';
 import './App.css';
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
           <div className="output-area">
             <h3>Rendered Output:</h3>
             <VulnerableComponent htmlContent={userInput} />
+            <hr style={{ margin: '20px 0', borderColor: '#444' }} />
+            <AnotherVulnerableComponent userInput={userInput} />
           </div>
         </div>
       </header>
