@@ -18,7 +18,7 @@ def get_services():
 def get_service(service_id: str):
     """Return a single service by its slug ID. """
     service = next((s for s in SERVICES if s["id"] == service_id), None)
-    print("hello world")
+    print("hello world lah")
     if not service:
         raise HTTPException(status_code=404, detail="Service not found.")
     return ok(service)
