@@ -10,7 +10,10 @@ function Testimonials() {
   const [errors, setErrors] = useState({});
 
   const fetchTestimonials = () => {
-    fetch(API)
+    const token = localStorage.getItem('token');
+    fetch(API, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
       .then(res => res.json())
       .then(json => {
         if (json.success) setTestimonials(json.data);
@@ -80,10 +83,9 @@ function Testimonials() {
             <div className="grid-2">
               {testimonials.map((t) => (
                 <div className="card testimonial-card" key={t.id}>
-                  <div
-                    className="testimonial-content"
-                    dangerouslySetInnerHTML={{ __html: t.content }}
-                  />
+                  <div className="testimonial-content">
+                    {t.content}
+                  </div>
                   <div className="testimonial-author">
                     <div className="testimonial-avatar">
                       {t.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}

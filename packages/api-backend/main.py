@@ -36,7 +36,7 @@ app.add_middleware(
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type", "Accept"],
+    allow_headers=["Content-Type", "Accept", "Authorization"],
 )
 
 # ── Routers ───────────────────────────────────────────────────────────────────

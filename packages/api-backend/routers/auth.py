@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException
 
 from data.store import users
 from models.auth import LoginRequest, SignupRequest
+from utils.auth import create_access_token
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
@@ -53,7 +54,9 @@ def login(payload: LoginRequest):
     if not hmac.compare_digest(expected, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid username or password.")
 
+    token = create_access_token({"sub": user["username"], "role": user["role"]})
+
     return ok(
-        {"username": user["username"], "email": user["email"], "role": user["role"]},
+        {"username": user["username"], "email": user["email"], "role": user["role"], "token": token},
         message="Login successful.",
     )
