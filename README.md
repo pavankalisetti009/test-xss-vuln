@@ -34,5 +34,4 @@ Renders HTML content by directly manipulating the DOM's `innerHTML` property usi
 - Uses `divRef` to access the DOM element.
 - Updates `divRef.current.innerHTML` whenever `htmlContent` changes.
 
-## Security Warning
-This project intentionally includes vulnerable patterns for educational purposes. **Do not use these patterns in production applications** as they can expose users to XSS attacks.
+
