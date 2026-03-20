@@ -1,6 +1,6 @@
-# Test XSS Vulnerability Project
+# Testimonials App
 
-This project is a demonstration of potential Cross-Site Scripting (XSS) vulnerabilities in a React application, along with a simple FastAPI backend.
+A React frontend with a FastAPI backend for collecting and displaying user testimonials.
 
 ## Project Structure
 
@@ -11,9 +11,11 @@ This project is a demonstration of potential Cross-Site Scripting (XSS) vulnerab
 
 Located in `packages/api-backend/main.py`.
 
-### Methods
-- `read_root()`: GET `/` - Returns a simple "Hello World" message.
-- `read_item(item_id, q)`: GET `/items/{item_id}` - Returns the item ID and an optional query parameter.
+### Endpoints
+- `GET /` - Returns a welcome message.
+- `GET /items/{item_id}` - Returns the item ID and an optional query parameter.
+- `POST /api/v1/testimonials` - Submit a new testimonial.
+- `GET /api/v1/testimonials` - List all testimonials.
 
 ## Web App (React)
 
@@ -23,15 +25,9 @@ Located in `packages/web-app/src/`.
 
 #### `App.js`
 The main application component that manages user input and passes it to the rendering components.
-- `handleChange(event)`: Updates the state with the current value of the textarea.
 
 #### `ContentRenderer.js`
-Renders HTML content using React's `dangerouslySetInnerHTML`.
-- `createMarkup()`: Returns an object with the `__html` key for `dangerouslySetInnerHTML`.
+Renders testimonial content on the page.
 
-#### `VulnerableComponent.js`
-Renders HTML content by directly manipulating the DOM's `innerHTML` property using a `useRef` and `useEffect`.
-- Uses `divRef` to access the DOM element.
-- Updates `divRef.current.innerHTML` whenever `htmlContent` changes.
-
-
+#### `Testimonials.js`
+Displays submitted testimonials from the backend.
