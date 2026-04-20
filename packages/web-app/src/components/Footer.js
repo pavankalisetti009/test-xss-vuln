@@ -20,6 +20,7 @@ function Footer({ navigate }) {
               <li><button onClick={() => navigate('home')}>Home</button></li>
               <li><button onClick={() => navigate('about')}>About</button></li>
               <li><button onClick={() => navigate('work')}>Work</button></li>
+              <li><button onClick={() => navigate('insights')}>Insights</button></li>
               <li><button onClick={() => navigate('contact')}>Contact</button></li>
             </ul>
           </div>
