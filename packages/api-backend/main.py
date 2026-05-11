@@ -8,6 +8,8 @@ Responsibilities:
 - Register global error handlers
 """
 
+import logging
+import time
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException, Request
@@ -15,6 +17,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from routers import auth, contact, projects, services, stats, team
+
+logger = logging.getLogger("nexus.requests")
 
 # ── App ───────────────────────────────────────────────────────────────────────
 
@@ -38,6 +42,22 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "Accept"],
 )
+
+
+@app.middleware("http")
+async def log_request_timing(request: Request, call_next):
+    """Log method, path, status code, and elapsed time for every request."""
+    started = time.perf_counter()
+    response = await call_next(request)
+    elapsed_ms = (time.perf_counter() - started) * 1000
+    logger.info(
+        "%s %s -> %d (%.2f ms)",
+        request.method,
+        request.url.path,
+        response.status_code,
+        elapsed_ms,
+    )
+    return response
 
 # ── Routers ───────────────────────────────────────────────────────────────────
 
