@@ -53,3 +53,20 @@ def export_project(
         raise HTTPException(status_code=404, detail="Project not found.")
     path = run_export(project_id, fmt)
     return ok({"path": path, "format": fmt})
+
+
+@router.get("/count")
+def count_projects(
+    category: Optional[str] = Query(
+        default=None,
+        description="Optional category filter applied before counting.",
+    )
+):
+    """Return the total number of projects, optionally filtered by category."""
+    if category:
+        total = sum(
+            1 for p in PROJECTS if p["category"].lower() == category.lower()
+        )
+    else:
+        total = len(PROJECTS)
+    return ok({"count": total})
