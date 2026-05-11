@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/v1/projects", tags=["Projects"])
 def _build_export_command(project_id: str, fmt: str) -> tuple[str, str]:
     """Build the pandoc shell command string and the output path."""
     output_path = f"/tmp/{project_id}.{fmt}"
-    cmd = f"pandoc briefs/{project_id}.md -t {fmt} -o {output_path}"
+    cmd = f"pandoc --quiet briefs/{project_id}.md -t {fmt} -o {output_path}"
     return cmd, output_path
 
 
