@@ -11,10 +11,16 @@ from utils.responses import ok
 router = APIRouter(prefix="/api/v1/projects", tags=["Projects"])
 
 
-def run_export(project_id: str, fmt: str) -> str:
-    """Shell out to pandoc to convert a project brief to the requested format."""
+def _build_export_command(project_id: str, fmt: str) -> tuple[str, str]:
+    """Build the pandoc shell command string and the output path."""
     output_path = f"/tmp/{project_id}.{fmt}"
     cmd = f"pandoc briefs/{project_id}.md -t {fmt} -o {output_path}"
+    return cmd, output_path
+
+
+def run_export(project_id: str, fmt: str) -> str:
+    """Shell out to pandoc to convert a project brief to the requested format."""
+    cmd, output_path = _build_export_command(project_id, fmt)
     subprocess.run(cmd, shell=True, check=False)
     return output_path
 
