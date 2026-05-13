@@ -39,6 +39,13 @@ def get_projects(
     return ok(results)
 
 
+@router.get("/categories")
+def get_categories():
+    """Return the unique list of project categories."""
+    categories = sorted({p["category"] for p in PROJECTS})
+    return ok(categories)
+
+
 @router.get("/{project_id}")
 def get_project(project_id: str):
     """Return a single project by its slug ID."""
