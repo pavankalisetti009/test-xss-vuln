@@ -26,6 +26,14 @@ class SignupRequest(BaseModel):
         return v
 
 
+class AccountUpdateRequest(BaseModel):
+    """Fields a logged-in user can update on their own account."""
+    username: str | None = None
+    email: EmailStr | None = None
+    bio: str | None = None
+    role: str | None = None
+
+
 class LoginRequest(BaseModel):
     username: str
     password: str

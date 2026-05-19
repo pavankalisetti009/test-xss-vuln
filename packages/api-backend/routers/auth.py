@@ -7,10 +7,21 @@ import os
 from fastapi import APIRouter, HTTPException
 
 from data.store import users
-from models.auth import LoginRequest, SignupRequest
+from models.auth import AccountUpdateRequest, LoginRequest, SignupRequest
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
+
+
+@router.patch("/me")
+def update_self(payload: AccountUpdateRequest, current_username: str):
+    """Apply the partial account update for the currently logged-in user."""
+    user = next((u for u in users if u["username"] == current_username), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+    updates = payload.dict(exclude_unset=True)
+    user.update(updates)
+    return ok({"username": user["username"], "email": user["email"], "role": user["role"]})
 
 
 def _hash_password(password: str, salt: str) -> str:
