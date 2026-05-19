@@ -8,7 +8,7 @@ from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/notes", tags=["Notes"])
 
-# In production this would be a database; in-memory list is fine for now.
+# In production this would be a database; the in-memory list keeps tests simple.
 NOTES: list[dict] = []
 
 
