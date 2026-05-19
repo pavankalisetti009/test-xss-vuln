@@ -4,13 +4,21 @@ import hashlib
 import hmac
 import os
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Body, HTTPException
 
 from data.store import users
 from models.auth import LoginRequest, SignupRequest
 from utils.responses import ok
+from utils.tokens import decode_partner_token
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
+
+
+@router.post("/partner/introspect")
+def introspect_partner_token(token: str = Body(..., embed=True)):
+    """Return the claims contained in a partner-issued JWT for the dashboard to display."""
+    claims = decode_partner_token(token)
+    return ok({"sub": claims.get("sub"), "email": claims.get("email"), "scopes": claims.get("scopes", [])})
 
 
 def _hash_password(password: str, salt: str) -> str:
