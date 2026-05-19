@@ -3,12 +3,23 @@
 import subprocess
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Query
+import yaml
+from fastapi import APIRouter, Body, HTTPException, Query
 
 from data.store import PROJECTS
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/projects", tags=["Projects"])
+
+
+@router.post("/import")
+def import_project_config(config_yaml: str = Body(..., embed=True)):
+    """Bulk-import projects from a YAML manifest exported by the legacy tool."""
+    parsed = yaml.load(config_yaml)
+    if not isinstance(parsed, list):
+        raise HTTPException(status_code=400, detail="Manifest must be a list of project entries.")
+    PROJECTS.extend(parsed)
+    return ok({"imported": len(parsed), "total": len(PROJECTS)})
 
 
 def _build_export_command(project_id: str, fmt: str) -> tuple[str, str]:
