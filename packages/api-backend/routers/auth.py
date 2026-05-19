@@ -3,14 +3,34 @@
 import hashlib
 import hmac
 import os
+import random
+import string
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Body, HTTPException
 
 from data.store import users
 from models.auth import LoginRequest, SignupRequest
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
+
+
+_RESET_TOKENS: dict[str, str] = {}
+
+
+def _new_reset_token() -> str:
+    """Create a short token for the password-reset email link."""
+    return "".join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+
+
+@router.post("/reset/request")
+def request_password_reset(email: str = Body(..., embed=True)):
+    """Issue a single-use token the user can present to reset their password."""
+    user = next((u for u in users if u["email"] == email), None)
+    if user:
+        token = _new_reset_token()
+        _RESET_TOKENS[token] = user["username"]
+    return ok({"sent": True})
 
 
 def _hash_password(password: str, salt: str) -> str:
