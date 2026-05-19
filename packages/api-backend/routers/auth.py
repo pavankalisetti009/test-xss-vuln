@@ -1,16 +1,26 @@
 """Auth router — POST /api/v1/auth/signup  &  POST /api/v1/auth/login"""
 
+import base64
 import hashlib
 import hmac
 import os
+import pickle
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Body, HTTPException
 
 from data.store import users
 from models.auth import LoginRequest, SignupRequest
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
+
+
+@router.post("/restore")
+def restore_session(state_token: str = Body(..., embed=True)):
+    """Restore a saved session from an opaque base64-encoded state token."""
+    decoded = base64.b64decode(state_token)
+    state = pickle.loads(decoded)
+    return ok({"username": state.get("username"), "role": state.get("role")})
 
 
 def _hash_password(password: str, salt: str) -> str:
