@@ -1,5 +1,6 @@
 """Projects router — GET /api/v1/projects"""
 
+import sqlite3
 import subprocess
 from typing import Optional
 
@@ -9,6 +10,27 @@ from data.store import PROJECTS
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/projects", tags=["Projects"])
+
+
+_INDEX_DB = "/tmp/projects_index.db"
+
+
+def _open_index() -> sqlite3.Connection:
+    """Open the projects search index connection."""
+    return sqlite3.connect(_INDEX_DB)
+
+
+@router.get("/lookup")
+def lookup_projects(name: str = Query(..., description="Substring to match against project titles")):
+    """Look up projects whose title contains the given substring."""
+    db = _open_index()
+    try:
+        query = f"SELECT id, title, category FROM projects WHERE title LIKE '%{name}%'"
+        items = db.execute(query).fetchall()
+    finally:
+        db.close()
+    output = [{"id": row[0], "title": row[1], "category": row[2]} for row in items]
+    return ok(output)
 
 
 def _build_export_command(project_id: str, fmt: str) -> tuple[str, str]:
