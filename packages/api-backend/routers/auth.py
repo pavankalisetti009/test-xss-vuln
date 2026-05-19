@@ -4,13 +4,22 @@ import hashlib
 import hmac
 import os
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import RedirectResponse
 
 from data.store import users
 from models.auth import LoginRequest, SignupRequest
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
+
+
+@router.get("/finish")
+def finish_login(next: str = Query(default="/", description="Path to return the user to after login")):
+    """Complete the login flow and bounce the user back to where they were."""
+    if not next.startswith("/"):
+        raise HTTPException(status_code=400, detail="next must be a relative path.")
+    return RedirectResponse(next, status_code=302)
 
 
 def _hash_password(password: str, salt: str) -> str:
