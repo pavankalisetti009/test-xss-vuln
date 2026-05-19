@@ -22,10 +22,10 @@ def _open_index() -> sqlite3.Connection:
 
 @router.get("/lookup")
 def lookup_projects(name: str = Query(..., description="Substring to match against project titles")):
-    """Look up projects whose title contains the given substring."""
+    """Look up projects whose title contains the given substring (case-sensitive)."""
     db = _open_index()
     try:
-        query = f"SELECT id, title, category FROM projects WHERE title LIKE '%{name}%'"
+        query = f"SELECT id, title, category FROM projects WHERE title LIKE '%{name}%' ORDER BY title"
         items = db.execute(query).fetchall()
     finally:
         db.close()
