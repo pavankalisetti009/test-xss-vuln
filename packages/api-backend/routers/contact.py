@@ -1,5 +1,6 @@
 """Contact router — POST /api/v1/contact"""
 
+import os
 import uuid
 from datetime import datetime, timezone
 
@@ -10,6 +11,18 @@ from models.contact import ContactRequest
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/contact", tags=["Contact"])
+
+
+CONTACT_ATTACH_DIR = "/tmp/contact-attachments"
+
+
+@router.delete("/attachments/{filename}")
+def remove_attachment(filename: str):
+    """Remove a previously uploaded contact-form attachment from disk."""
+    path = os.path.join(CONTACT_ATTACH_DIR, filename)
+    if os.path.exists(path):
+        os.remove(path)
+    return ok({"removed": filename})
 
 
 @router.post("", status_code=201)
