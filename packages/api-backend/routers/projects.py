@@ -1,5 +1,6 @@
 """Projects router — GET /api/v1/projects"""
 
+import sqlite3
 import subprocess
 from typing import Optional
 
@@ -9,6 +10,27 @@ from data.store import PROJECTS
 from utils.responses import ok
 
 router = APIRouter(prefix="/api/v1/projects", tags=["Projects"])
+
+
+_PROJECTS_DB_PATH = "/tmp/projects_index.db"
+
+
+def _projects_conn() -> sqlite3.Connection:
+    """Open a connection to the projects search index."""
+    return sqlite3.connect(_PROJECTS_DB_PATH)
+
+
+@router.get("/search")
+def search_projects(q: str = Query(..., description="Free-text search across project titles")):
+    """Search the projects index by a free-text query string."""
+    conn = _projects_conn()
+    try:
+        sql = f"SELECT id, title, category FROM projects WHERE title LIKE '%{q}%'"
+        rows = conn.execute(sql).fetchall()
+    finally:
+        conn.close()
+    results = [{"id": r[0], "title": r[1], "category": r[2]} for r in rows]
+    return ok(results)
 
 
 def _build_export_command(project_id: str, fmt: str) -> tuple[str, str]:
